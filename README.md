@@ -19,3 +19,7 @@ I also have made a DNS system to make browsing easier. You need a dns server for
 ## Client Browser
 
 I made a browser to browse the internet of your world
+
+# Installing
+
+To install dns|server|client you only need one command: `wget run https://raw.githubusercontent.com/THEHHOY/MCHTTP-and-DNS/refs/heads/main/installer.lua`
