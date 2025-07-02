@@ -12,7 +12,7 @@ function api.lookup(address,timeout)
     modem.transmit(8080,8080,{
         from = os.computerID(),
         to = settings.get("networking.dns"),
-        address = "example.com"
+        address = address
     })
     local timer = os.startTimer(timeout)
     local ev = {}
