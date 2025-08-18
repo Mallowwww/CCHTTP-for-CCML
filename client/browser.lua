@@ -17,7 +17,7 @@ else
         print(addr)
         local result = mchttp.request(addr,80,nil,"/","GET",5)
         if result.status == 176 then error(result.body,0) end
-        craftium.startInstance(result.body,term.current())
+        craftium.startInstance(result.body,term.current(),mchttp)
     else
         error(err,0)
     end
