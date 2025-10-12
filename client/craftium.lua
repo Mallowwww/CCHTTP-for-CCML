@@ -48,15 +48,10 @@ function api.startInstance(siteData, frame, mchttp)
         return
     end
     local customEnv = crawlForNode("env")
-    if customEnv and textutils.unserialise(customEnv) then
-        for i,j in customEnv do
-            if not env[i] then
-                env[i] = j
-            end
-        end
-    elseif customEnv and textutils.unserialise("{"..customEnv.."}") then
-        customEnv = "{"..customEnv.."}"
-        for i,j in customEnv do
+    local customEnvTable = nil
+    if customEnv then customEnvTable = textutils.unserialise(customEnv) end
+    if customEnv and customEnvTable then
+        for i,j in pairs(customEnvTable) do
             if not env[i] then
                 env[i] = j
             end
