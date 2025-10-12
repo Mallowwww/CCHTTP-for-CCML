@@ -54,13 +54,13 @@ function api.startInstance(siteData, frame, mchttp)
                 env[i] = j
             end
         end
-    -- elseif customEnv and textutils.unserialise("{"..customEnv.."}") then
-    --     customEnv = "{"..customEnv.."}"
-    --     for i,j in customEnv do
-    --         if not env[i] then
-    --             env[i] = j
-    --         end
-    --     end
+    elseif customEnv and textutils.unserialise("{"..customEnv.."}") then
+        customEnv = "{"..customEnv.."}"
+        for i,j in customEnv do
+            if not env[i] then
+                env[i] = j
+            end
+        end
     end
     api.frame:loadXML(siteData, env)
     
