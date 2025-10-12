@@ -47,7 +47,7 @@ function api.startInstance(siteData, frame, mchttp)
         print("ERROR - Can't parse xml")
         return
     end
-    local customEnv = crawlForNode("env")
+    local customEnv = crawlForNode("env").value
     local customEnvTable = nil
     if customEnv then customEnvTable = textutils.unserialise(customEnv) end
     if customEnv and customEnvTable then
