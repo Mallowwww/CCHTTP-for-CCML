@@ -1,6 +1,6 @@
 -- Based on MCHTTP by HHOY
 local githubPage = "https://raw.githubusercontent.com/Mallowwww/CCHTTP-for-CCML/refs/heads/main/"
-local directory = "cchttp/"
+local directory = "/cchttp/"
 local files = {
     "client/mchttp.lua",
     "client/craftium.lua",
@@ -46,6 +46,8 @@ while true do
         break
     end
 end
+shell.run("rm "..directory)
+print("Installing "..categoryNames[ans].."...")
 for i,j in pairs(categories[categoryNames[ans]]) do
     print(i, j, ans)
     local req = http.get(githubPage..j)
@@ -55,3 +57,12 @@ for i,j in pairs(categories[categoryNames[ans]]) do
     handle.close()
 end
 print("Success !")
+if categoryNames[ans] == "Client" or categoryNames[ans] == "All" then
+    print("Checking if Basalt is installed...")
+    local result = pcall(function() temp = require("basalt") end)
+    if not result then
+        print("Installing Basalt...")
+        shell.run("wget run https://raw.githubusercontent.com/Pyroxenium/Basalt2/main/install.lua -r")
+    end
+    print("Basalt installed !")
+end
