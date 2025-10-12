@@ -12,31 +12,20 @@ function crawlForNode(node, name)
     end
     return nil
 end
+function crawlForNodeFromAttribute(node, attribute, value)
+    if not node then return nil end
+    if node.attribute[attribute] == value then return node end
+    if node.children then
+        for i,j in pairs(node.children) do
+            result = crawlForNode(j, name)
+            if result then return result end
+        end
+    end
+    return nil
+end
 function api.startInstance(siteData, frame, mchttp)
     api.frame = frame
     local tX,tY = frame:getSize()
-    local env = {
-        frame = api.frame,
-        os = {
-            pullEvent = os.pullEvent,
-            queueEvent = os.queueEvent,
-            startTimer = os.startTimer,
-            cancelTimer = os.cancelTimer,
-            sleep = sleep,
-            time = os.time,
-            date = os.date,
-        },
-        sleep = sleep,
-        keys = keys,
-        colors = colors,
-        colours = colours,
-        error = error,
-        window = window
-    } 
-    if mchttp then
-        env.mchttp = mchttp
-    end
-    --local func, err = load(siteData,"site",nil,env)
     local xml = basalt.getAPI("xml")
     if not xml then
         print("ERROR - XML plugin not found")
@@ -47,6 +36,35 @@ function api.startInstance(siteData, frame, mchttp)
         print("ERROR - Can't parse xml")
         return
     end
+    local env = {
+        frame = api.frame,
+        os = {
+            pullEvent = os.pullEvent,
+            queueEvent = os.queueEvent,
+            startTimer = os.startTimer,
+            cancelTimer = os.cancelTimer,
+            sleep = sleep,
+            colors = colors,
+            time = os.time,
+            date = os.date,
+        },
+        sleep = sleep,
+        keys = keys,
+        colors = colors,
+        colours = colours,
+        error = error,
+        frame = frame,
+        getNode = function(value) 
+            for i,j in pairs(parsed) do
+                local result = crawlForNodeFromAttribute(j, "id", value) 
+                if result then return result end
+            end
+        end
+    } 
+    if mchttp then
+        env.mchttp = mchttp
+    end
+    --local func, err = load(siteData,"site",nil,env)
     local customEnv = nil
     for i=1, #parsed do
         local temp = crawlForNode(parsed[i], "env")
