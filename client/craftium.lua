@@ -75,7 +75,7 @@ function api.startInstance(siteData, frame, mchttp)
     end
     local customEnvTable = nil
     if customEnv then 
-        customEnvTable = textutils.unserialise(string.gsub(customEnv, "%s+", "")) 
+        customEnvTable = load("return "..string.gsub(customEnv, "%s+", ""), nil, "bt", env) 
     end
     
     if customEnv and customEnvTable then
