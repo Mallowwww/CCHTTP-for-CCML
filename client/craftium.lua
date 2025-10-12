@@ -3,7 +3,7 @@ local basalt = require("/basalt")
 -- Based on MCHTTP by HHOY
 function crawlForNode(node, name)
     if not node then return nil end
-    if node.ni == name then return node end
+    if node.tag == name then return node end
     if node.children then
         for i,j in pairs(node.children) do
             result = crawlForNode(j, name)
@@ -47,9 +47,19 @@ function api.startInstance(siteData, frame, mchttp)
         print("ERROR - Can't parse xml")
         return
     end
-    local customEnv = crawlForNode("env").value
+    local customEnv = nil
+    for i=1, #parsed do
+        local temp = crawlForNode(parsed[i], "env")
+        if temp then
+            customEnv = temp.value
+            break
+        end
+    end
     local customEnvTable = nil
-    if customEnv then customEnvTable = textutils.unserialise(customEnv) end
+    if customEnv then 
+        customEnvTable = textutils.unserialise(string.gsub(customEnv, "%s+", "")) 
+    end
+    
     if customEnv and customEnvTable then
         for i,j in pairs(customEnvTable) do
             if not env[i] then
