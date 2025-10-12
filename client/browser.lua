@@ -1,7 +1,7 @@
 local craftium = require("craftium")
 local dns = require("dnsapi")
 local mchttp = require("mchttp")
-local basalt = require("basalt")
+local basalt = require("/basalt")
 
 if type(arg[1]) ~= "string" then
     error("Argument 1 expected to be string",0)

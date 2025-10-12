@@ -1,5 +1,5 @@
 local api = {}
-local basalt = require("basalt")
+local basalt = require("/basalt")
 -- Based on MCHTTP by HHOY
 function crawlForNode(node, name)
     if not node then return nil end
