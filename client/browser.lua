@@ -40,6 +40,16 @@ function addressBarWidget(frame)
         :onClick(function()
             
         end)
+    local bookmark = widget:addButton()
+        :setPosition(3, 1)
+        :setWidth(1)
+        :setHeight(1)
+        :setText("¤")
+        :setBackground(colors.black)
+        :setForeground(colors.white)
+        :onClick(function()
+            
+        end)
     return widget
 end
 function browserFrameWidget(data, frame, mchttp)
