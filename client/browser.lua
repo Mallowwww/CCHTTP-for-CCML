@@ -7,6 +7,7 @@ local state = {}
 
 peripheral.find("modem", rednet.open)
 
+state.indicator = "disconnected" -- "disconnected", "connecting", "connected"
 state.mchttp = mchttp
 state.bookmark = nil
 state.frame = basalt.getMainFrame()
@@ -15,11 +16,13 @@ function handleCCHTTP(url)
     local addr, err = dns.lookup(url,5)
     if addr then
         local firstSlash = string.find(url, "/")
+        local result = nil
         if not firstSlash then
-            local result = mchttp.request(addr,80,nil, "/","GET",5)
+            result = mchttp.request(addr,80,nil, "/","GET",5)
         else
-            local result = mchttp.request(addr,80,nil,string.sub(url, firstSlash),"GET",5)
+            result = mchttp.request(addr,80,nil,string.sub(url, firstSlash),"GET",5)
         end
+        
         if result and result.body then
             local browserFrame = browserFrameWidget(result.body, state.frame)
             if state.browser then state.browser:destroy() end
@@ -111,6 +114,26 @@ function addressBarWidget(frame)
                 handleURL(url)
             end
         end)
+    local indicator = widget:addContainer()
+        :setWidth(1)
+        :setHeight(1)
+        :setText("")
+        :setPosition(1, 1)
+        :setBackground(colors.green)
+    basalt.schedule(function()
+        local time = os.clock()
+        if state.indicator == "connected" then
+            indicator:setBackground(colors.green)
+        elseif state.indicator == "disconnected" then
+            indicator:setBackground(colors.red)
+        else
+            if time % 2 < 1 then
+                indicator:setBackground(colors.yellow)
+            else
+                indicator:setBackground(colors.black)
+            end
+        end
+    end)
     bookmark = widget:addButton()
         :setPosition(2, 1)
         :setWidth(1)
