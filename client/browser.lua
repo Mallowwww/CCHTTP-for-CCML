@@ -8,6 +8,43 @@ state.mchttp = mchttp
 state.bookmark = nil
 state.frame = basalt.getMainFrame()
     :initializeState("booked_site", nil, true, "/states/BaseFrame.state")
+function handleCCHTTP(url)
+
+end
+function handleFILE(path)
+    if (not fs.exists(path)) then return end
+    local handle = fs.open(path, "r")
+    local data = handle.readAll()
+    handle.close()
+    if (state.browser) then
+        state.browser:destroy()
+    end
+    local browserFrame = browserFrameWidget(data,state.frame)
+    return browserFrame
+
+end
+function handleHTTP(url)
+
+end
+function handleURL(url)
+    local urlPieces = {}
+    local n = 1
+    url = url .. "://"
+    for s in string.gmatch(url,  "(.-)(".."://"..")" ) do
+        urlPieces[n] = s
+        n = n + 1
+    end
+    if urlPieces[1] == "file" then
+        state.browser = handleFILE(urlPieces[2])
+    elseif urlPieces[1] == "http" then
+        state.browser = handleHTTP(urlPieces[2])
+    elseif urlPieces[1] == "cchttp" then
+        state.browser = handleCCHTTP(urlPieces[2])
+    end
+    if not state.browser then
+        state.browser = handleFILE("/cchttp/client/error.ccml")
+    end
+end
 function addressBarWidget(frame)
     local bookmark = {}
     local widget = frame:addContainer()
@@ -49,7 +86,10 @@ function addressBarWidget(frame)
         :setBackground(colors.green)
         :setForeground(colors.black)
         :onClick(function()
-            
+            local url = address:getText()
+            if url then
+                handleURL(url)
+            end
         end)
     bookmark = widget:addButton()
         :setPosition(2, 1)
@@ -77,50 +117,18 @@ function browserFrameWidget(data, frame)
     local widget = frame:addContainer()
         :setWidth("{parent.width}")
         :setHeight("{parent.height - 1}")
+        :setBackground(colors.white)
+        :setForeground(colors.black)
         :setPosition(1, 2)
     craftium.startInstance(data, widget, state.mchttp)
+    return widget
+    
 end
 
-function handleCCHTTP(url)
-
-end
-function handleFILE(path)
-    if (!fs.exists(path)) then return end
-    local handle = fs.open(path, "r")
-    local data = handle.readAll()
-    handle.close()
-    if (state.browser) then
-        state.browser:destroy()
-    end
-    local browserFrame = browserFrameWidget(data,state.frame)
-    return browserFrame
-
-end
-function handleHTTP(url)
-
-end
-function handleURL(url)
-    local urlPieces = {}
-    local n = 1
-    for s in string.gmatch(url,  "(.-)(".."://"..")" ) do
-        urlPieces[n] = s
-        n = n + 1
-    end
-    local addressBar = addressBarWidget(state.frame)
-    if urlPieces[1] == "file" then
-        state.browser = handleFILE(urlPieces[2])
-    elseif urlPieces[1] == "http" then
-        state.browser = handleHTTP(urlPieces[2])
-    elseif urlPieces[1] == "cchttp" then
-        state.browser = handleCCHTTP(urlPieces[2])
-    end
-    if not state.browser then
-        state.browser = handleFILE("/cchttp/client/error.ccml")
-    end
-    state.addressBar = addressBar
-end
 function main()
     handleURL("file://example.ccml")
+    state.addressBar = addressBar
+    local addressBar = addressBarWidget(state.frame)
     basalt.run()
 end
 main()
