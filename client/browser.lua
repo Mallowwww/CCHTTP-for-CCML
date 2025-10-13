@@ -12,7 +12,7 @@ function handleCCHTTP(url)
 
 end
 function handleFILE(path)
-    if (not fs.exists(path)) then return end
+    if not path or (not fs.exists(path)) then return end
     local handle = fs.open(path, "r")
     local data = handle.readAll()
     handle.close()
