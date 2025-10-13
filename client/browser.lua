@@ -27,7 +27,8 @@ if fs.exists(arg[1]) then
     local handle = fs.open(arg[1],"r")
     local data = handle.readAll()
     handle.close()
-    craftium.startInstance(data, state.frame)
+    local browserFrame = browserFrameWidget(data,state.frame,mchttp)
+    local addressBar = addressBarWidget(state.frame)
     basalt.run()
 else
     local addr, err = dns.lookup(arg[1],5)
