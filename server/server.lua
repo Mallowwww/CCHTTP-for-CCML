@@ -14,7 +14,10 @@ end)
 
 app:listen("/", "GET", function(pack)
     print("Got message: ", pack.body)
-    local handle = fs.open(directory.."/".."index.ccml")
+    local handle = fs.open(directory.."/".."index.ccml", "r")
+    local data = handle.readAll()
+    handle.close()
+    return data
 end)
 
 app:run()

@@ -15,9 +15,12 @@ function handleCCHTTP(url)
     local addr, err = dns.lookup(url,5)
     if addr then
         local firstSlash = string.find(url, "/")
-        if not firstSlash then firstSlash = #url end
-        local result = mchttp.request(addr,80,nil,string.sub(url, firstSlash),"GET",5)
-        if result.body then
+        if not firstSlash then
+            local result = mchttp.request(addr,80,nil, "/","GET",5)
+        else
+            local result = mchttp.request(addr,80,nil,string.sub(url, firstSlash),"GET",5)
+        end
+        if result and result.body then
             local browserFrame = browserFrameWidget(result.body, state.frame)
             if state.browser then state.browser:destroy() end
             state.browser = browserFrame
