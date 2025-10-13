@@ -14,6 +14,7 @@ end
 function handleFILE(path)
     if not path or (not fs.exists(path)) then return end
     local handle = fs.open(path, "r")
+    if not handle then return end
     local data = handle.readAll()
     handle.close()
     if (state.browser) then
@@ -40,6 +41,8 @@ function handleURL(url)
         state.browser = handleHTTP(urlPieces[2])
     elseif urlPieces[1] == "cchttp" then
         state.browser = handleCCHTTP(urlPieces[2])
+    else
+        state.browser = handleFILE("/cchttp/client/error.ccml")
     end
     if not state.browser then
         state.browser = handleFILE("/cchttp/client/error.ccml")
