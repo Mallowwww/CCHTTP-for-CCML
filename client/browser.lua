@@ -9,7 +9,18 @@ state.bookmark = nil
 state.frame = basalt.getMainFrame()
     :initializeState("booked_site", nil, true, "/states/BaseFrame.state")
 function handleCCHTTP(url)
-
+    local addr, err = dns.lookup(url,5)
+    if addr then
+        local firstSlash = string.find(url, "/")
+        if not firstSlash then firstSlash = "/" end
+        local result = mchttp.request(addr,80,nil,string.sub(url, firstSlash),"GET",5)
+        if result.body then
+            local browserFrame = browserFrameWidget(result.body, state.frame)
+            if state.browser then state.browser:destroy() end
+            state.browser = browserFrame
+            return browserFrame
+        end
+    end
 end
 function handleFILE(path)
     if not path or (not fs.exists(path)) then return end
@@ -114,6 +125,9 @@ function addressBarWidget(frame)
                     :setForeground(colors.black)
             end
         end)
+    if state.frame:getState("booked_site") then
+        address:setText(state.frame:getState("booked_site"))
+    end
     return widget
 end
 function browserFrameWidget(data, frame)
@@ -129,7 +143,12 @@ function browserFrameWidget(data, frame)
 end
 
 function main()
-    handleURL("file://example.ccml")
+    
+    if state.frame:getState("booked_site") then
+        handleURL(state.frame:getState("booked_site"))
+    else
+        handleURL("file://example.ccml")
+    end
     state.addressBar = addressBar
     local addressBar = addressBarWidget(state.frame)
     basalt.run()

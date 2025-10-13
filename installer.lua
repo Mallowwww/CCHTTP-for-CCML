@@ -10,7 +10,8 @@ local files = {
     "dns/dns.lua",
     "dns/lookup",
     "server/mchttp-server.lua",
-    "server/server.lua"
+    "server/server.lua",
+    "server/index.ccml"
 }
 local categoryNames = {"Client", "DNS", "Server", "All", "Quit"}
 local categories = {
