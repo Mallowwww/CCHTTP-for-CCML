@@ -9,6 +9,7 @@ end
 local state = {}
 state.bookmark = nil
 state.frame = basalt.getMainFrame()
+    :initializeState("booked_site", nil, true, "/states/BaseFrame.state")
 function addressBarWidget(frame)
     local bookmark = {}
     local widget = frame:addContainer()
@@ -22,8 +23,8 @@ function addressBarWidget(frame)
         :setWidth("{parent.width - 6}")
         :setForeground(colors.white)
         :setBackground(colors.black)
-        :onChange(function(self)
-            local state = bookmark:getState("booked_state")
+        :onChange("text", function(self)
+            local state = state.frame:getState("booked_site")
             if state == self:getText() then
                 bookmark:setBackground(colors.white)
                     :setForeground(colors.black)
@@ -53,17 +54,24 @@ function addressBarWidget(frame)
             
         end)
     bookmark = widget:addButton()
-        :setPosition(3, 1)
+        :setPosition(1, 1)
         :setWidth(1)
         :setHeight(1)
         :setText("*")
         :setBackground(colors.black)
         :setForeground(colors.white)
-        :initializeState("booked_site", nil, true, "ccml/client/booked_site.state")
         :onClick(function(self)
-            self:setState("booked_site", address:getText())
-            bookmark:setBackground(colors.white)
-                :setForeground(colors.black)
+            local bookedState = state.frame:getState("booked_site")
+            if bookedState == address:getText() then
+                state.frame:setState("booked_site", nil)
+                bookmark:setBackground(colors.black)
+                    :setForeground(colors.white)
+
+            else
+                state.frame:setState("booked_site", address:getText())
+                bookmark:setBackground(colors.white)
+                    :setForeground(colors.black)
+            end
         end)
     return widget
 end
