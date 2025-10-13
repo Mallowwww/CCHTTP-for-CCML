@@ -1,0 +1,3 @@
+<frame width="{parent.width}" height="{parent.height}" background="{colors.black}">
+    <label text="Uh oh! We couldn't find that page.\nVerify that the server is chunkloaded and that you entered the correct URL" />
+</frame>

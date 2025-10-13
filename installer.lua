@@ -6,6 +6,7 @@ local files = {
     "client/craftium.lua",
     "client/browser.lua",
     "client/dnsapi.lua",
+    "client/error.ccml",
     "dns/dns.lua",
     "dns/lookup",
     "server/mchttp-server.lua",
@@ -17,7 +18,8 @@ local categories = {
         "client/mchttp.lua",
         "client/craftium.lua",
         "client/browser.lua",
-        "client/dnsapi.lua"
+        "client/dnsapi.lua",
+        "client/error.ccml"
     }, DNS = {
         "dns/dns.lua",
         "dns/lookup"
@@ -64,5 +66,10 @@ if categoryNames[ans] == "Client" or categoryNames[ans] == "All" then
         print("Installing Basalt...")
         shell.run("wget run https://raw.githubusercontent.com/Pyroxenium/Basalt2/main/install.lua -r")
     end
-    print("Basalt installed !")
+    if not pcall(function() temp = require("basalt") end) then
+        term.setTextColor(Colors.red)
+        print("ERROR - Could not install Basalt")
+        term.setTextColor(Colors.white)
+    end
 end
+print("Done !")

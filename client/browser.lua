@@ -3,10 +3,8 @@ local dns = require("dnsapi")
 local mchttp = require("mchttp")
 local basalt = require("/basalt")
 
-if type(arg[1]) ~= "string" then
-    error("Argument 1 expected to be string",0)
-end
 local state = {}
+state.mchttp = mchttp
 state.bookmark = nil
 state.frame = basalt.getMainFrame()
     :initializeState("booked_site", nil, true, "/states/BaseFrame.state")
@@ -17,7 +15,7 @@ function addressBarWidget(frame)
         :setHeight(1)
         :setBackground(colors.gray)
     local address = widget:addInput()
-        :setPlaceholder("www.example.fi")
+        :setPlaceholder("cchttp://www.example.fi")
         :setPosition(4, 1)
         :setHeight(1)
         :setWidth("{parent.width - 6}")
@@ -54,7 +52,7 @@ function addressBarWidget(frame)
             
         end)
     bookmark = widget:addButton()
-        :setPosition(1, 1)
+        :setPosition(2, 1)
         :setWidth(1)
         :setHeight(1)
         :setText("*")
@@ -75,31 +73,66 @@ function addressBarWidget(frame)
         end)
     return widget
 end
-function browserFrameWidget(data, frame, mchttp)
+function browserFrameWidget(data, frame)
     local widget = frame:addContainer()
         :setWidth("{parent.width}")
         :setHeight("{parent.height - 1}")
         :setPosition(1, 2)
-    craftium.startInstance(data, widget, mchttp)
+    craftium.startInstance(data, widget, state.mchttp)
 end
-if fs.exists(arg[1]) then
-    
-    local handle = fs.open(arg[1],"r")
+
+function handleCCHTTP(url)
+
+end
+function handleFILE(path)
+    if (!fs.exists(path)) then return end
+    local handle = fs.open(path, "r")
     local data = handle.readAll()
     handle.close()
-    local browserFrame = browserFrameWidget(data,state.frame,mchttp)
-    local addressBar = addressBarWidget(state.frame)
-    basalt.run()
-else
-    local addr, err = dns.lookup(arg[1],5)
-    if addr then
-        print(addr)
-        local result = mchttp.request(addr,80,nil,"/","GET",5)
-        if result.status == 176 then error(result.body,0) end
-        local browserFrame = browserFrameWidget(result.body,state.frame,mchttp)
-        local addressBar = addressBarWidget(state.frame)
-        basalt.run()
-    else
-        error(err,0)
+    if (state.browser) then
+        state.browser:destroy()
     end
+    local browserFrame = browserFrameWidget(data,state.frame)
+    return browserFrame
+
 end
+function handleHTTP(url)
+
+end
+function handleURL(url)
+    local urlPieces = {}
+    local n = 1
+    for s in string.gmatch(url,  "(.-)(".."://"..")" ) do
+        urlPieces[n] = s
+        n = n + 1
+    end
+    local addressBar = addressBarWidget(state.frame)
+    if urlPieces[1] == "file" then
+        state.browser = handleFILE(urlPieces[2])
+    elseif urlPieces[1] == "http" then
+        state.browser = handleHTTP(urlPieces[2])
+    elseif urlPieces[1] == "cchttp" then
+        state.browser = handleCCHTTP(urlPieces[2])
+    end
+    if not state.browser then
+        state.browser = handleFILE("/cchttp/client/error.ccml")
+    end
+    state.addressBar = addressBar
+end
+function main()
+    handleURL("file://example.ccml")
+    basalt.run()
+end
+main()
+--     local addr, err = dns.lookup(arg[1],5)
+--     if addr then
+--         print(addr)
+--         local result = mchttp.request(addr,80,nil,"/","GET",5)
+--         if result.status == 176 then error(result.body,0) end
+--         local browserFrame = browserFrameWidget(result.body,state.frame,mchttp)
+--         local addressBar = addressBarWidget(state.frame)
+--         basalt.run()
+--     else
+--         error(err,0)
+--     end
+-- end
