@@ -4,6 +4,9 @@ local mchttp = require("mchttp")
 local basalt = require("/basalt")
 
 local state = {}
+
+peripheral.find("modem", rednet.open)
+
 state.mchttp = mchttp
 state.bookmark = nil
 state.frame = basalt.getMainFrame()
@@ -12,7 +15,7 @@ function handleCCHTTP(url)
     local addr, err = dns.lookup(url,5)
     if addr then
         local firstSlash = string.find(url, "/")
-        if not firstSlash then firstSlash = "/" end
+        if not firstSlash then firstSlash = #url end
         local result = mchttp.request(addr,80,nil,string.sub(url, firstSlash),"GET",5)
         if result.body then
             local browserFrame = browserFrameWidget(result.body, state.frame)

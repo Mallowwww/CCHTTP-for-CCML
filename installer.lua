@@ -26,7 +26,8 @@ local categories = {
         "dns/lookup"
     }, Server = {
         "server/mchttp-server.lua",
-        "server/server.lua"
+        "server/server.lua",
+        "server/index.ccml"
     }, All = files,
     Quit = {}
 }

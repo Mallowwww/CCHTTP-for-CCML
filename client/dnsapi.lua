@@ -5,7 +5,7 @@ api.MODEM = peripheral.find("modem")
 function api.lookup(address,timeout)
     settings.define("networking.dns",{
         description = "Default DNS",
-        default = 51,
+        default = 1,
         type = "number"
     })
     local modem = api.MODEM
