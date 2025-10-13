@@ -19,7 +19,7 @@ function browserFrameWidget(data, frame, mchttp)
     local widget = frame:addContainer()
         :setWidth("{parent.width}")
         :setHeight("{parent.height - 1}")
-        :setY(2)
+        :setPosition(1, 2)
     craftium.startInstance(data, widget, mchttp)
 end
 if fs.exists(arg[1]) then
