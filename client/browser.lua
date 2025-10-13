@@ -13,6 +13,13 @@ function addressBarWidget(frame)
         :setWidth("{parent.width}")
         :setHeight(1)
         :setBackground(colors.gray)
+    local address = widget:addInput()
+        :setPlaceholder("www.example.fi")
+        :setPosition(4, 1)
+        :setHeight(1)
+        :setWidth("{parent.width - 6}")
+        :setForeground(colors.white)
+        :setBackground(colors.black)
     return widget
 end
 function browserFrameWidget(data, frame, mchttp)
