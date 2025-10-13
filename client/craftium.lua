@@ -1,8 +1,10 @@
 local api = {}
 local basalt = require("/basalt")
+
 -- Based on MCHTTP by HHOY
 function crawlForNode(node, name)
     if not node then return nil end
+    
     if node.tag == name then return node end
     if node.children then
         for i,j in pairs(node.children) do
@@ -12,16 +14,29 @@ function crawlForNode(node, name)
     end
     return nil
 end
-function crawlForNodeFromAttribute(node, attribute, value)
-    if not node then return nil end
-    if node.attribute and node.attribute[attribute] == value then return node end
-    if node.children then
-        for i,j in pairs(node.children) do
-            result = crawlForNode(j, name)
+function crawlForElementWithAttribute(element, attribute, value)
+    if not element then return nil end
+    if element[attribute] and (element[attribute] == "\""..value.."\"" or element[attribute] == value) then return element end
+    
+    if element.children then
+        for i,j in pairs(element.children) do
+            result = crawlForElementWithAttribute(j, attribute, value)
             if result then return result end
         end
     end
     return nil
+end
+function crawlForElementsWithAttribute(element, attribute, value)
+    if not element then return {} end
+    if element[attribute] and (element[attribute] == "\""..value.."\"" or element[attribute] == value) then return {element} end
+    local temp = {}
+    if element.children then
+        for i,j in pairs(element.children) do
+            result = crawlForElementWithAttribute(j, attribute, value)
+            if result then temp = temp:concat(result) end
+        end
+    end
+    return temp
 end
 function api.startInstance(siteData, frame, mchttp)
     api.frame = frame
@@ -44,7 +59,6 @@ function api.startInstance(siteData, frame, mchttp)
             startTimer = os.startTimer,
             cancelTimer = os.cancelTimer,
             sleep = sleep,
-            colors = colors,
             time = os.time,
             date = os.date,
         },
@@ -52,13 +66,17 @@ function api.startInstance(siteData, frame, mchttp)
         keys = keys,
         colors = colors,
         colours = colours,
+        pairs = pairs,
+        tostring = tostring,
+        type = type,
         error = error,
         frame = frame,
-        getNode = function(value) 
-            for i,j in pairs(parsed) do
-                local result = crawlForNodeFromAttribute(j, "id", value) 
-                if result then return result end
-            end
+        textutils = textutils,
+        getElement = function(value) 
+            local result = crawlForElementWithAttribute(api.frame, "id", value) 
+            if result then return result end
+            
+            return nil
         end
     } 
     if mchttp then
@@ -75,7 +93,8 @@ function api.startInstance(siteData, frame, mchttp)
     end
     local customEnvTable = nil
     if customEnv then 
-        customEnvTable = load("return "..string.gsub(customEnv, "%s+", ""), nil, "bt", env)()
+        local temp = "return "..customEnv
+        customEnvTable = load(temp, nil, "bt", env)()
     end
     
     if customEnv and customEnvTable then
