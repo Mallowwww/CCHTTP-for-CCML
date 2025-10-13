@@ -17,7 +17,7 @@ app:listen("/", "GET", function(pack)
     local handle = fs.open(directory.."/".."index.ccml", "r")
     local data = handle.readAll()
     handle.close()
-    return return {body=data,contentType="text/plain"}
+    return {body=data,contentType="text/plain"}
 end)
 
 app:run()
