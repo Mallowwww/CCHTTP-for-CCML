@@ -14,7 +14,7 @@ function crawlForNode(node, name)
 end
 function crawlForNodeFromAttribute(node, attribute, value)
     if not node then return nil end
-    if node.attribute[attribute] == value then return node end
+    if node.attribute and node.attribute[attribute] == value then return node end
     if node.children then
         for i,j in pairs(node.children) do
             result = crawlForNode(j, name)
@@ -75,7 +75,7 @@ function api.startInstance(siteData, frame, mchttp)
     end
     local customEnvTable = nil
     if customEnv then 
-        customEnvTable = load("return "..string.gsub(customEnv, "%s+", ""), nil, "bt", env) 
+        customEnvTable = load("return "..string.gsub(customEnv, "%s+", ""), nil, "bt", env)()
     end
     
     if customEnv and customEnvTable then
