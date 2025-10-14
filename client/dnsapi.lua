@@ -1,7 +1,28 @@
 local api = {}
 
 api.MODEM = peripheral.find("modem")
-
+function api.findDNS()
+    modem.transmit(8080, 8080, {
+        from = os.getComputerID(),
+        to = -1,
+        address = ""
+    })
+    local servers = {}
+    local timer = os.startTimer()
+    local time = os.clock()
+    local ev = {}
+    for i=1,10 do
+        if time > 3 then break end
+        ev = {os.pullEvent()}
+        if ev[1] == "modem_message" then
+            local pack = ev[5]
+            servers[i] = pack.address
+        elseif ev[2] == timer then
+            break
+        end
+    end
+    return servers
+end
 function api.lookup(address,timeout)
     settings.define("networking.dns",{
         description = "Default DNS",
@@ -22,7 +43,7 @@ function api.lookup(address,timeout)
         ev = {os.pullEvent()}
         if ev[1] == "modem_message" then
             local pack = ev[5]
-            if pack.to == os.computerID() then
+            if pack.to == os.getComputerID() then
                 status = pack
             end
         elseif ev[2] == timer then

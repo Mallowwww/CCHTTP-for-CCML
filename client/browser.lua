@@ -50,6 +50,7 @@ end
 function handleURL(url)
     local urlPieces = {}
     local n = 1
+    local result = true
     url = url .. "://"
     for s in string.gmatch(url,  "(.-)(".."://"..")" ) do
         urlPieces[n] = s
@@ -62,11 +63,14 @@ function handleURL(url)
     elseif urlPieces[1] == "cchttp" then
         state.browser = handleCCHTTP(urlPieces[2])
     else
+        result = false
         state.browser = handleFILE("/cchttp/client/error.ccml")
     end
     if not state.browser then
+        result = false
         state.browser = handleFILE("/cchttp/client/error.ccml")
     end
+    return result
 end
 function addressBarWidget(frame)
     local bookmark = {}
@@ -111,13 +115,19 @@ function addressBarWidget(frame)
         :onClick(function()
             local url = address:getText()
             if url then
-                handleURL(url)
+                state.indicator = "connecting"
+                os.sleep(1)
+                local result = handleURL(url)
+                if result then
+                    state.indicator = "connected"
+                else
+                    state.indicator = "disconnected"
+                end
             end
         end)
     local indicator = widget:addContainer()
         :setWidth(1)
         :setHeight(1)
-        :setText("")
         :setPosition(1, 1)
         :setBackground(colors.green)
     basalt.schedule(function()

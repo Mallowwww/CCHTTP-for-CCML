@@ -38,6 +38,11 @@ while dnsOpen do
                 status = 404
             })
         end
+    elseif packet.to == -1 then
+        modem.transmit(8080, 8080, {
+            to = packet.from,
+            address = os.getComputerID()
+        })
     end
 end
 
