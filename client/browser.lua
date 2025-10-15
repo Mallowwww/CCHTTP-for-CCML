@@ -1,7 +1,6 @@
 local craftium = require("craftium")
 local dns = require("dnsapi")
 local cchttp = require("cchttp")
-local http = require("http")
 local basalt = require("/basalt")
 
 local state = {}
@@ -115,6 +114,30 @@ function addressBarWidget(frame)
         :onClick(function()
             basalt.stop()
         end)
+    local indicator = widget:addContainer()
+        :setWidth(1)
+        :setHeight(1)
+        :setPosition(1, 1)
+        :setBackground(colors.green)
+    function changeIndicator()
+        while true do
+            local time = os.clock() * 3
+            if state.indicator == "connected" then
+                indicator:setBackground(colors.green)
+                break
+            elseif state.indicator == "disconnected" then
+                indicator:setBackground(colors.red)
+                break
+            else
+                if time % 2 < 1 then
+                    indicator:setBackground(colors.yellow)
+                else
+                    indicator:setBackground(colors.black)
+                end
+            end
+            os.sleep(.05)
+        end
+    end
     local go = widget:addButton()
         :setPosition("{parent.width-2}", 1)
         :setWidth(2)
@@ -126,6 +149,7 @@ function addressBarWidget(frame)
             local url = address:getText()
             if url then
                 state.indicator = "connecting"
+                basalt.schedule(changeIndicator)
                 os.sleep(1)
                 local result = handleURL(url)
                 if result then
@@ -135,25 +159,6 @@ function addressBarWidget(frame)
                 end
             end
         end)
-    local indicator = widget:addContainer()
-        :setWidth(1)
-        :setHeight(1)
-        :setPosition(1, 1)
-        :setBackground(colors.green)
-    basalt.schedule(function()
-        local time = os.clock() * 1.5
-        if state.indicator == "connected" then
-            indicator:setBackground(colors.green)
-        elseif state.indicator == "disconnected" then
-            indicator:setBackground(colors.red)
-        else
-            if time % 2 < 1 then
-                indicator:setBackground(colors.yellow)
-            else
-                indicator:setBackground(colors.black)
-            end
-        end
-    end)
     bookmark = widget:addButton()
         :setPosition(2, 1)
         :setWidth(1)
