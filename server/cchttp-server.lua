@@ -30,23 +30,25 @@ function api.new(port)
             if ev[1] == "modem_message" then
                 print("Message In!!!")
                 local packet = ev[5]
-                if packet.host ~= os.getComputerID then goto continue_loop end
+                if packet.host ~= os.getComputerID() then goto continue_loop end
                 local listener = getListener(lib.listeners, packet.path, packet.method)
                 if not listener then goto continue_loop end
                 print("Method "..packet.method.." called at "..packet.path)
-                _ = {
-                    "GET" = function()
+                local temp = ({
+                    GET = function()
                         local ret = listener.func(packet)
+                        local status = 200
+                        if ret.body == "404" then status = 404 end
                         modem.transmit(100, port, {
-                            status = 200,
+                            status = status,
                             headers = {["content-type"]=ret.contentType},
                             body = ret.body,
                             recipient = packet.from
                         })
-                    end, "POST" = function()
+                    end, POST = function()
                         listener.func(packet)
                     end
-                }[packet.method]()
+                })[packet.method]()
                 -- if packet.host == os.computerID() then
                 --     print("ID RIGHT")
                 --     local success = false

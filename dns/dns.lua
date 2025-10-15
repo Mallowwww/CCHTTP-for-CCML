@@ -23,7 +23,8 @@ while dnsOpen do
     local packet = ev[5]
     if packet.to == os.getComputerID() then
         print("ID Right")
-        local address = lookup[packet.address]
+
+        local address = lookup[string.gsub(packet.address, "/.*$", "")]
         if address then
             print("address Right")
             modem.transmit(8080,8080,{
