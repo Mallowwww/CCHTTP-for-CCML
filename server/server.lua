@@ -11,7 +11,16 @@ end)
 app:listen("/post","POST",function(pack)
     print("MSG:",pack.body)
 end)
-
+app:listen("/*", "GET", function(pack)
+    print("Wildcard hit! ", pack.body)
+    if pack.path[-1] == "/" then pack.path = string.sub(pack.path, 1, #pack.path) end
+    local location = directory..pack.path.."index.ccml", "r"
+    if not fs.exists(location) then return end
+    local handle = fs.open(location)
+    local data = handle.readAll()
+    handle.close()
+    return {body=data,contentType="text/plain"}
+end)
 app:listen("/", "GET", function(pack)
     print("Got message: ", pack.body)
     local handle = fs.open(directory.."/".."index.ccml", "r")
