@@ -10,7 +10,7 @@ function api.request(host,port,body,path,method,timeout)
         host = host,
         path=path,
         headers={
-            ["User-Agent"] = "mchttp-client/1.0"
+            ["User-Agent"] = "cchttp-client/1.0"
         },
         body=body
     })

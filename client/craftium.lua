@@ -38,7 +38,7 @@ function crawlForElementsWithAttribute(element, attribute, value)
     end
     return temp
 end
-function api.startInstance(siteData, frame, mchttp)
+function api.startInstance(siteData, frame, cchttp)
     api.frame = frame
     local tX,tY = frame:getSize()
     local xml = basalt.getAPI("xml")
@@ -79,8 +79,8 @@ function api.startInstance(siteData, frame, mchttp)
             return nil
         end
     } 
-    if mchttp then
-        env.mchttp = mchttp
+    if cchttp then
+        env.cchttp = cchttp
     end
     --local func, err = load(siteData,"site",nil,env)
     local customEnv = nil

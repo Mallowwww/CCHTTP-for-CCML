@@ -1,6 +1,6 @@
-local mchttpserver = require("mchttp-server")
+local cchttpserver = require("cchttp-server")
 
-local app = mchttpserver.new(80)
+local app = cchttpserver.new(80)
 
 local directory = "/cchttp/server"
 

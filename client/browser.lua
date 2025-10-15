@@ -1,6 +1,6 @@
 local craftium = require("craftium")
 local dns = require("dnsapi")
-local mchttp = require("mchttp")
+local cchttp = require("cchttp")
 local basalt = require("/basalt")
 
 local state = {}
@@ -8,7 +8,7 @@ local state = {}
 peripheral.find("modem", rednet.open)
 
 state.indicator = "disconnected" -- "disconnected", "connecting", "connected"
-state.mchttp = mchttp
+state.cchttp = cchttp
 state.bookmark = nil
 state.frame = basalt.getMainFrame()
     :initializeState("booked_site", nil, true, "/states/BaseFrame.state")
@@ -18,9 +18,9 @@ function handleCCHTTP(url)
         local firstSlash = string.find(url, "/")
         local result = nil
         if not firstSlash then
-            result = mchttp.request(addr,80,nil, "/","GET",5)
+            result = cchttp.request(addr,80,nil, "/","GET",5)
         else
-            result = mchttp.request(addr,80,nil,string.sub(url, firstSlash),"GET",5)
+            result = cchttp.request(addr,80,nil,string.sub(url, firstSlash),"GET",5)
         end
         
         if result and result.body then
@@ -45,7 +45,15 @@ function handleFILE(path)
 
 end
 function handleHTTP(url)
-
+    local data = http.get(url)
+    if data then
+        if state.browser then
+            state.browser:destroy()
+        end
+        return browserFrameWidget(data.readAll(), state.frame)
+        
+    end
+    
 end
 function handleURL(url)
     local urlPieces = {}
@@ -59,7 +67,7 @@ function handleURL(url)
     if urlPieces[1] == "file" then
         state.browser = handleFILE(urlPieces[2])
     elseif urlPieces[1] == "http" then
-        state.browser = handleHTTP(urlPieces[2])
+        state.browser = handleHTTP(url)
     elseif urlPieces[1] == "cchttp" then
         state.browser = handleCCHTTP(urlPieces[2])
     else
@@ -176,7 +184,7 @@ function browserFrameWidget(data, frame)
         :setBackground(colors.white)
         :setForeground(colors.black)
         :setPosition(1, 2)
-    craftium.startInstance(data, widget, state.mchttp)
+    craftium.startInstance(data, widget, state.cchttp)
     return widget
     
 end
@@ -196,9 +204,9 @@ main()
 --     local addr, err = dns.lookup(arg[1],5)
 --     if addr then
 --         print(addr)
---         local result = mchttp.request(addr,80,nil,"/","GET",5)
+--         local result = cchttp.request(addr,80,nil,"/","GET",5)
 --         if result.status == 176 then error(result.body,0) end
---         local browserFrame = browserFrameWidget(result.body,state.frame,mchttp)
+--         local browserFrame = browserFrameWidget(result.body,state.frame,cchttp)
 --         local addressBar = addressBarWidget(state.frame)
 --         basalt.run()
 --     else
