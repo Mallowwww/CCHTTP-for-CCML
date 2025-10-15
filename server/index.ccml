@@ -1,1 +1,15 @@
-<label text="You made it!" />
+<env>{
+    func = function(self)
+        if not cchttp or not dns then return end
+        local addr, error = dns.lookup("example.com", 5)
+        if not addr then return end
+        local result = cchttp.request(
+            addr, 80, "text", "/echo", "GET", 5
+        )
+        if result and result.body then
+            getElement("changeme"):setText(result.body)
+        end
+    end
+}</env>
+<label id="changeme" text="You made it!" />
+<button text="Click me" y="3" onClick="func" />

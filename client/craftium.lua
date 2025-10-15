@@ -1,6 +1,6 @@
 local api = {}
 local basalt = require("/basalt")
-
+local dns = require("dnsapi")
 -- Based on MCHTTP by HHOY
 function crawlForNode(node, name)
     if not node then return nil end
@@ -79,6 +79,9 @@ function api.startInstance(siteData, frame, cchttp, http)
             return nil
         end
     } 
+    if dns then
+        env.dns = dns
+    end
     if cchttp then
         env.cchttp = cchttp
     end
