@@ -1,6 +1,7 @@
 local craftium = require("craftium")
 local dns = require("dnsapi")
 local cchttp = require("cchttp")
+local http = require("http")
 local basalt = require("/basalt")
 
 local state = {}
@@ -9,6 +10,7 @@ peripheral.find("modem", rednet.open)
 
 state.indicator = "disconnected" -- "disconnected", "connecting", "connected"
 state.cchttp = cchttp
+state.http = http
 state.bookmark = nil
 state.frame = basalt.getMainFrame()
     :initializeState("booked_site", nil, true, "/states/BaseFrame.state")
@@ -139,7 +141,7 @@ function addressBarWidget(frame)
         :setPosition(1, 1)
         :setBackground(colors.green)
     basalt.schedule(function()
-        local time = os.clock()
+        local time = os.clock() * 1.5
         if state.indicator == "connected" then
             indicator:setBackground(colors.green)
         elseif state.indicator == "disconnected" then
@@ -184,7 +186,7 @@ function browserFrameWidget(data, frame)
         :setBackground(colors.white)
         :setForeground(colors.black)
         :setPosition(1, 2)
-    craftium.startInstance(data, widget, state.cchttp)
+    craftium.startInstance(data, widget, state.cchttp, state.http)
     return widget
     
 end

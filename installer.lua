@@ -2,21 +2,21 @@
 local githubPage = "https://raw.githubusercontent.com/Mallowwww/CCHTTP-for-CCML/refs/heads/main/"
 local directory = "/cchttp/"
 local files = {
-    "client/mchttp.lua",
+    "client/cchttp.lua",
     "client/craftium.lua",
     "client/browser.lua",
     "client/dnsapi.lua",
     "client/error.ccml",
     "dns/dns.lua",
     "dns/lookup",
-    "server/mchttp-server.lua",
+    "server/cchttp-server.lua",
     "server/server.lua",
     "server/index.ccml"
 }
 local categoryNames = {"Client", "DNS", "Server", "All", "Quit"}
 local categories = {
     Client = {
-        "client/mchttp.lua",
+        "client/cchttp.lua",
         "client/craftium.lua",
         "client/browser.lua",
         "client/dnsapi.lua",
@@ -25,7 +25,7 @@ local categories = {
         "dns/dns.lua",
         "dns/lookup"
     }, Server = {
-        "server/mchttp-server.lua",
+        "server/cchttp-server.lua",
         "server/server.lua",
         "server/index.ccml"
     }, All = files,
