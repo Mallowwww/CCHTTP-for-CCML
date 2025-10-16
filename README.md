@@ -1,6 +1,7 @@
 # CCHTTP
 This is a fork of MCHTTP by HHOY made to work with the CCML language.
 The goal of this fork is to make a fully-featured internet that runs entirely in-game using a custom markup language based on XML.
+Check out the [CCHTTP Wiki](https://github.com/Mallowwww/CCHTTP-for-CCML/wiki) for help setting it up!
 # CCML
 CCML is a markup language built off of Basalt2's XML parser. On its own, it works just like Basalt2, letting you create pages with XML elements.
 ```xml
