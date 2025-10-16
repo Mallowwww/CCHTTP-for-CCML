@@ -15,7 +15,10 @@ end)
 app:listen("/*", "GET", function(pack)
     print("Wildcard hit! ", pack.body)
     if pack.path[-1] == "/" then pack.path = string.sub(pack.path, 1, #pack.path) end
-    local location = directory.."/"..pack.path..".ccml", "r"
+    local location = directory.."/"..pack.path.."/index.ccml"
+    if string.match(pack.path, "\\.") then
+        location = directory.."/"..pack.path
+    end
     local status = 200
     if not fs.exists(location) then status = 404 end
     local handle = nil

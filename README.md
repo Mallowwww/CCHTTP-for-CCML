@@ -7,7 +7,7 @@ CCML is a markup language built off of Basalt2's XML parser. On its own, it work
 <label text="This is a label !"/>
 <label y="3" text="This is another label !">
 ```
-The main addition to Basalt2 that CCML provides is the ability to add environment variables. In an `<env/>` tag, you can place a table that will be added to the environment, including things like functions. As well, the environment has access to `cchttp` (for talking to in-game servers), `dns` (for resolving addresses), `http`, `getElement()` (for getting an element with a given id), among some other helpful variabls. Putting these together, it becomes possible to make a fully featured web application that's fully sandboxed.
+The main addition to Basalt2 that CCML provides is the ability to add environment variables in-code. In an `<env/>` tag, you can place a table who's elements will be added to the environment, including things like functions. As well, the default environment has access to `cchttp`, `dns`, `http`, `getElement()` (for getting an element with a given id), some of the `os` module, among some other helpful variables. Putting these together, it becomes possible to make a fully featured web application that's fully sandboxed.
 ```xml
 <env>{
     func = function(self)
@@ -49,6 +49,30 @@ app:listen("/", "GET", function(pack)
 end)
 
 app:run()
+```
+Server listeners also support wildcards, letting you make traversable filesystems:
+```lua
+app:listen("/*", "GET", function(pack)
+    print("Wildcard hit! ", pack.body)
+    if pack.path[-1] == "/" then pack.path = string.sub(pack.path, 1, #pack.path) end
+    local location = directory.."/"..pack.path.."/index.ccml", "r"
+    local status = 200
+    if not fs.exists(location) then status = 404 end
+    local handle = nil
+    if status == 404 then
+        handle = fs.open(directory.."/404.ccml", "r")
+    else
+        handle = fs.open(location, "r")
+    end
+    local data = nil
+    if handle then
+        data = handle.readAll()
+        handle.close()
+    else
+        data = ""
+    end
+    return {body=data,contentType="text/plain", status = status}
+end)
 ```
 # DNS
 `dns.lua` runs a DNS server that can allow websites to have human-readable names. It keeps all of its values in a table in `/cchttp/dns/lookup`, so adding values here makes them available to users.
