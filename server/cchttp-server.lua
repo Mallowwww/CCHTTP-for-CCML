@@ -4,7 +4,7 @@ api.MODEM = peripheral.find("modem")
 local function getListener(listeners, path, method)
     for i, listener in ipairs(listeners) do
         if 
-                (listener.route == path or string.match("^"..string.gsub(listener.route, "*", ".*").."$", path)) 
+                (listener.route == path or string.match(path, string.gsub(listener.route, "*", ".+").."$")) 
                 and listener.method == method then
             return listener
         end

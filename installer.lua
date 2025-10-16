@@ -11,6 +11,7 @@ local files = {
     "dns/lookup",
     "server/cchttp-server.lua",
     "server/server.lua",
+    "server/404.ccml",
     "server/index.ccml"
 }
 local categoryNames = {"Client", "DNS", "Server", "All", "Quit"}
@@ -27,6 +28,7 @@ local categories = {
     }, Server = {
         "server/cchttp-server.lua",
         "server/server.lua",
+        "server/404.ccml",
         "server/index.ccml"
     }, All = files,
     Quit = {}

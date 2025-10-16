@@ -27,10 +27,10 @@ app:listen("/*", "GET", function(pack)
     local data = nil
     if handle then
         data = handle.readAll()
+        handle.close()
     else
         data = ""
     end
-    handle.close()
     return {body=data,contentType="text/plain", status = status}
 end)
 app:listen("/", "GET", function(pack)
