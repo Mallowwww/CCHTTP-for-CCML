@@ -38,7 +38,7 @@ function crawlForElementsWithAttribute(element, attribute, value)
     end
     return temp
 end
-function api.startInstance(siteData, frame, cchttp, http)
+function api.startInstance(siteData, frame, cchttp, http, statusCode)
     api.frame = frame
     local tX,tY = frame:getSize()
     local xml = basalt.getAPI("xml")
@@ -50,6 +50,11 @@ function api.startInstance(siteData, frame, cchttp, http)
     pcall(function() parsed = xml.parseText(siteData) end)
     if not parsed then
         print("ERROR - Can't parse xml")
+        frame:addLabel()
+            :setText("XML parse error:\nAre you trying to load an HTML website?")
+            :setWidth("{parent.width}")
+            :setHeight("{parent.height}")
+            :setAutoSize(false)
         return
     end
     local env = {
@@ -88,6 +93,9 @@ function api.startInstance(siteData, frame, cchttp, http)
     end
     if http then
         env.http = http
+    end
+    if statusCode then
+        env.statusCode = statusCode
     end
     --local func, err = load(siteData,"site",nil,env)
     local customEnv = nil
