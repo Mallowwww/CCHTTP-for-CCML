@@ -192,7 +192,7 @@ function browserFrameWidget(data, frame)
         :setBackground(colors.white)
         :setForeground(colors.black)
         :setPosition(1, 2)
-    craftium.startInstance(data, widget, state.cchttp, state.http)
+    craftium.startInstance(data, widget, state.cchttp, state.http, handleURL)
     return widget
     
 end

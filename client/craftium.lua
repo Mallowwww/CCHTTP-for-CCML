@@ -38,7 +38,7 @@ function crawlForElementsWithAttribute(element, attribute, value)
     end
     return temp
 end
-function api.startInstance(siteData, frame, cchttp, http, statusCode)
+function api.startInstance(siteData, frame, cchttp, http, redirect)
     api.frame = frame
     local tX,tY = frame:getSize()
     local xml = basalt.getAPI("xml")
@@ -85,6 +85,9 @@ function api.startInstance(siteData, frame, cchttp, http, statusCode)
             return nil
         end
     } 
+    if redirect then
+        env.redirect = redirect
+    end
     if dns then
         env.dns = dns
     end
