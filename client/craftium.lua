@@ -46,7 +46,8 @@ function api.startInstance(siteData, frame, cchttp, http)
         print("ERROR - XML plugin not found")
         return
     end
-    local parsed = xml.parseText(siteData)
+    local parsed = nil
+    pcall(function() parsed = xml.parseText(siteData) end)
     if not parsed then
         print("ERROR - Can't parse xml")
         return

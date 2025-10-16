@@ -1,4 +1,9 @@
-<frame background="{colors.black}" foreground="{colors.white}">
-    <bigfont text="404" />
-    <label text="Page not found" y="4" />
+<env>
+{
+    errorCode = "Err 404"
+}
+</env>
+<frame background="{colors.black}" width="{parent.width}" height="{parent.height}">
+    <bigFont text="${errorCode}" y="2" x="1" width="21" fontSize="1" foreground="{colors.white}" background="{colors.black}" />
+    <label text="Page not found" y="7" background="{colors.black}" foreground="{colors.white}" />
 </frame>
