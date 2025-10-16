@@ -37,10 +37,8 @@ function api.new(port)
                 local temp = ({
                     GET = function()
                         local ret = listener.func(packet)
-                        local status = 200
-                        if ret.body == "404" then status = 404 end
                         modem.transmit(100, port, {
-                            status = status,
+                            status = ret.status,
                             headers = {["content-type"]=ret.contentType},
                             body = ret.body,
                             recipient = packet.from
@@ -49,38 +47,6 @@ function api.new(port)
                         listener.func(packet)
                     end
                 })[packet.method]()
-                -- if packet.host == os.computerID() then
-                --     print("ID RIGHT")
-                --     local success = false
-                --     for i,a in ipairs(lib.listeners) do
-                --         print(a.route,a.method,a.func)
-                --         if a.route == packet.path then
-                --             print("ROUTE RIGHT")
-                --             if a.method == packet.method then
-                --                 print("METHOD RIGHT")
-                --                 if packet.method == "POST" then
-                --                     a.func(packet)
-                --                     success = true
-                --                     break
-                --                 elseif packet.method == "GET" then
-                --                     print("METHOD GET")
-                --                     local ret = a.func(packet)
-                --                     modem.transmit(100,port,{
-                --                         status = 200,
-                --                         headers = {["content-type"]=ret.contentType},
-                --                         body = ret.body,
-                --                         recipient = packet.from
-                --                     })
-                --                     success = true
-                --                     break
-                --                 end
-                --             end
-                --         elseif string.gmatch(a.packet, "^"..string.gsub(a.route, "\\*", ".*").."$") then
-                --             print("Hit wildcard !")
-
-                --         end
-                --     end
-                -- end
             end
             ::continue_loop::
         end

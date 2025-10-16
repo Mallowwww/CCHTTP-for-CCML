@@ -1,0 +1,4 @@
+<frame background="{colors.black}" foreground="{colors.white}">
+    <bigFont text="404" />
+    <label text="Page not found" y="4" />
+</frame>
