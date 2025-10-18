@@ -76,7 +76,6 @@ function api.startInstance(siteData, frame, cchttp, http, redirect)
         tostring = tostring,
         type = type,
         error = error,
-        frame = frame,
         textutils = textutils,
         getElement = function(value) 
             local result = crawlForElementWithAttribute(api.frame, "id", value) 
@@ -123,7 +122,9 @@ function api.startInstance(siteData, frame, cchttp, http, redirect)
         end
     end
     api.frame:loadXML(siteData, env)
-    
+    if env.onStart and type(env.onStart) == "function" then
+        env.onStart()
+    end
 end
 
 return api
