@@ -11,6 +11,7 @@ state.indicator = "disconnected" -- "disconnected", "connecting", "connected"
 state.cchttp = cchttp
 state.http = http
 state.bookmark = nil
+state.cookies = {}
 state.frame = basalt.getMainFrame()
     :initializeState("booked_site", nil, true, "/states/BaseFrame.state")
 function handleCCHTTP(url)
@@ -185,15 +186,14 @@ function addressBarWidget(frame)
     end
     return widget
 end
-function browserFrameWidget(data, frame)
+function browserFrameWidget(data, frame, cookies)
     local widget = frame:addContainer()
         :setWidth("{parent.width}")
         :setHeight("{parent.height - 1}")
         :setBackground(colors.white)
         :setForeground(colors.black)
         :setPosition(1, 2)
-    local cookies = {}
-    craftium.startInstance(data, widget, state.cchttp, state.http, handleURL, cookies)
+    craftium.startInstance(data, widget, state.cchttp, state.http, handleURL, state.cookies)
     return widget
     
 end
