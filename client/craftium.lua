@@ -38,7 +38,7 @@ function crawlForElementsWithAttribute(element, attribute, value)
     end
     return temp
 end
-function api.startInstance(siteData, frame, cchttp, http, redirect)
+function api.startInstance(siteData, frame, cchttp, http, redirect, cookies)
     api.frame = frame
     local tX,tY = frame:getSize()
     local xml = basalt.getAPI("xml")
@@ -98,6 +98,9 @@ function api.startInstance(siteData, frame, cchttp, http, redirect)
     end
     if statusCode then
         env.statusCode = statusCode
+    end
+    if cookies then
+        env.cookies = cookies
     end
     --local func, err = load(siteData,"site",nil,env)
     local customEnv = nil
