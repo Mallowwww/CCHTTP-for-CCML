@@ -80,6 +80,9 @@ function handleURL(url)
         result = false
         state.browser = handleFILE("/cchttp/client/error.ccml")
     end
+    if state.addressBar then
+        state.addressBar:setText(url)
+    end
     return result
 end
 function addressBarWidget(frame)
@@ -184,6 +187,11 @@ function addressBarWidget(frame)
     if state.frame:getState("booked_site") then
         address:setText(state.frame:getState("booked_site"))
     end
+    widget.address = address
+    widget.go = go
+    widget.bookmark = bookmark
+    widget.close = close
+    widget.indicator = indicator
     return widget
 end
 function browserFrameWidget(data, frame, cookies)
