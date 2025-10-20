@@ -81,7 +81,7 @@ function handleURL(url)
         state.browser = handleFILE("/cchttp/client/error.ccml")
     end
     if state.addressBar then
-        state.addressBar:setText(url)
+        state.addressBar.address:setText(url)
     end
     return result
 end
