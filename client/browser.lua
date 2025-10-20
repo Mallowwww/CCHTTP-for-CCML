@@ -61,6 +61,9 @@ function handleURL(url)
     local urlPieces = {}
     local n = 1
     local result = true
+    if state.addressBar then
+        state.addressBar.address:setText(url)
+    end
     url = url .. "://"
     for s in string.gmatch(url,  "(.-)(".."://"..")" ) do
         urlPieces[n] = s
@@ -79,9 +82,6 @@ function handleURL(url)
     if not state.browser then
         result = false
         state.browser = handleFILE("/cchttp/client/error.ccml")
-    end
-    if state.addressBar then
-        state.addressBar.address:setText(url)
     end
     return result
 end
