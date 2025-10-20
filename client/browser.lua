@@ -213,8 +213,8 @@ function main()
     else
         handleURL("file://example.ccml")
     end
-    state.addressBar = addressBar
     local addressBar = addressBarWidget(state.frame)
+    state.addressBar = addressBar
     basalt.run()
 end
 main()
