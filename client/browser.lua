@@ -13,8 +13,37 @@ state.http = http
 state.bookmark = nil
 state.cookies = {}
 state.frame = basalt.getMainFrame()
-    :initializeState("booked_site", nil, true, "/states/BaseFrame.state")
-function handleCCHTTP(url)
+    -- :initializeState("booked_site", nil, true, "/states/BaseFrame.state") -- old state system
+
+
+local function loadConfig()
+    if not fs.exists("/.config") then
+        fs.makeDir("/.config")
+    end
+    local handle = fs.open("/.config/ccsurf.json", "r")
+    if not handle then return end
+    local data = textutils.unserialiseJSON(handle.readAll())
+    if not data then return end
+    state.bookmark = data.bookmark
+    state.cookies = data.cookies
+end
+
+local function saveConfig()
+    if not fs.exists("/.config") then
+        return
+    end
+    local handle = fs.open("/.config/ccsurf.json", "w")
+    if not handle then return end
+    local data = {
+        bookmark = state.bookmark,
+        cookies = state.cookies
+    }
+    
+    handle.write(textutils.serialiseJSON(data))
+
+end
+
+local function handleCCHTTP(url)
     local addr, err = dns.lookup(url,5)
     if addr then
         local firstSlash = string.find(url, "/")
@@ -33,7 +62,7 @@ function handleCCHTTP(url)
         end
     end
 end
-function handleFILE(path)
+local function handleFILE(path)
     if not path or (not fs.exists(path)) then return end
     local handle = fs.open(path, "r")
     if not handle then return end
@@ -46,7 +75,7 @@ function handleFILE(path)
     return browserFrame
 
 end
-function handleHTTP(url)
+local function handleHTTP(url)
     local data = http.get(url)
     if data then
         if state.browser then
@@ -57,7 +86,7 @@ function handleHTTP(url)
     end
     
 end
-function handleURL(url)
+local function handleURL(url)
     local urlPieces = {}
     local n = 1
     local result = true
@@ -85,7 +114,7 @@ function handleURL(url)
     end
     return result
 end
-function addressBarWidget(frame)
+local function addressBarWidget(frame)
     local bookmark = {}
     local widget = frame:addContainer()
         :setWidth("{parent.width}")
@@ -99,7 +128,7 @@ function addressBarWidget(frame)
         :setForeground(colors.white)
         :setBackground(colors.black)
         :onChange("text", function(self)
-            local state = state.frame:getState("booked_site")
+            local state = state.bookmark
             if state == self:getText() then
                 bookmark:setBackground(colors.white)
                     :setForeground(colors.black)
@@ -172,20 +201,20 @@ function addressBarWidget(frame)
         :setBackground(colors.black)
         :setForeground(colors.white)
         :onClick(function(self)
-            local bookedState = state.frame:getState("booked_site")
+            local bookedState = state.bookmark
             if bookedState == address:getText() then
-                state.frame:setState("booked_site", nil)
+                state.bookmark = nil
                 bookmark:setBackground(colors.black)
                     :setForeground(colors.white)
 
             else
-                state.frame:setState("booked_site", address:getText())
+                state.bookmark = address:getText()
                 bookmark:setBackground(colors.white)
                     :setForeground(colors.black)
             end
         end)
-    if state.frame:getState("booked_site") then
-        address:setText(state.frame:getState("booked_site"))
+    if state.bookmark then
+        address:setText(state.bookmark)
     end
     widget.address = address
     widget.go = go
@@ -194,7 +223,7 @@ function addressBarWidget(frame)
     widget.indicator = indicator
     return widget
 end
-function browserFrameWidget(data, frame, cookies)
+local function browserFrameWidget(data, frame, cookies)
     local widget = frame:addContainer()
         :setWidth("{parent.width}")
         :setHeight("{parent.height - 1}")
@@ -206,17 +235,21 @@ function browserFrameWidget(data, frame, cookies)
     
 end
 
-function main()
-    
-    if state.frame:getState("booked_site") then
-        handleURL(state.frame:getState("booked_site"))
+local function main()
+    print("Meleah Lily's CCSurf v1.0")
+    print("All Rights Reserved")
+    os.sleep(1)
+    if state.bookmark then
+        handleURL(state.bookmark)
     else
         handleURL("file://example.ccml")
     end
     local addressBar = addressBarWidget(state.frame)
     state.addressBar = addressBar
     basalt.run()
+    saveConfig()
 end
+loadConfig()
 main()
 --     local addr, err = dns.lookup(arg[1],5)
 --     if addr then
