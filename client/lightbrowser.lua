@@ -7,10 +7,8 @@ local state = {}
 
 peripheral.find("modem", rednet.open)
 
-state.indicator = "disconnected" -- "disconnected", "connecting", "connected"
 state.cchttp = cchttp
 state.http = http
-state.bookmark = nil
 state.cookies = {}
 state.frame = basalt.getMainFrame()
     -- :initializeState("booked_site", nil, true, "/states/BaseFrame.state") -- old state system
@@ -24,8 +22,6 @@ local function loadConfig()
     if not handle then return end
     local data = textutils.unserialiseJSON(handle.readAll())
     if not data then return end
-    state.bookmark = data.bookmark
-    state.cookies = data.cookies
 end
 
 local function saveConfig()
@@ -35,8 +31,6 @@ local function saveConfig()
     local handle = fs.open("/.config/ccsurf.json", "w")
     if not handle then return end
     local data = {
-        bookmark = state.bookmark,
-        cookies = state.cookies
     }
     
     handle.write(textutils.serialiseJSON(data))
@@ -114,115 +108,7 @@ local function handleURL(url)
     end
     return result
 end
-local function addressBarWidget(frame)
-    local bookmark = {}
-    local widget = frame:addContainer()
-        :setWidth("{parent.width}")
-        :setHeight(1)
-        :setBackground(colors.gray)
-    local address = widget:addInput()
-        :setPlaceholder("cchttp://www.example.fi")
-        :setPosition(4, 1)
-        :setHeight(1)
-        :setWidth("{parent.width - 6}")
-        :setForeground(colors.white)
-        :setBackground(colors.black)
-        :onChange("text", function(self)
-            local state = state.bookmark
-            if state == self:getText() then
-                bookmark:setBackground(colors.white)
-                    :setForeground(colors.black)
-            else
-                bookmark:setBackground(colors.black)
-                    :setForeground(colors.white)
-            end
-        end)
-    local close = widget:addButton()
-        :setPosition("{parent.width}", 1)
-        :setWidth(1)
-        :setHeight(1)
-        :setText("X")
-        :setBackground(colors.red)
-        :setForeground(colors.black)
-        :onClick(function()
-            basalt.stop()
-            term.setCursorPos(1,1)
-        end)
-    local indicator = widget:addContainer()
-        :setWidth(1)
-        :setHeight(1)
-        :setPosition(1, 1)
-        :setBackground(colors.green)
-    function changeIndicator()
-        while true do
-            local time = os.clock() * 3
-            if state.indicator == "connected" then
-                indicator:setBackground(colors.green)
-                break
-            elseif state.indicator == "disconnected" then
-                indicator:setBackground(colors.red)
-                break
-            else
-                if time % 2 < 1 then
-                    indicator:setBackground(colors.yellow)
-                else
-                    indicator:setBackground(colors.black)
-                end
-            end
-            os.sleep(.05)
-        end
-    end
-    local go = widget:addButton()
-        :setPosition("{parent.width-2}", 1)
-        :setWidth(2)
-        :setHeight(1)
-        :setText("->")
-        :setBackground(colors.green)
-        :setForeground(colors.black)
-        :onClick(function()
-            local url = address:getText()
-            if url then
-                state.indicator = "connecting"
-                basalt.schedule(changeIndicator)
-                os.sleep(1)
-                local result = handleURL(url)
-                if result then
-                    state.indicator = "connected"
-                else
-                    state.indicator = "disconnected"
-                end
-            end
-        end)
-    bookmark = widget:addButton()
-        :setPosition(2, 1)
-        :setWidth(1)
-        :setHeight(1)
-        :setText("*")
-        :setBackground(colors.black)
-        :setForeground(colors.white)
-        :onClick(function(self)
-            local bookedState = state.bookmark
-            if bookedState == address:getText() then
-                state.bookmark = nil
-                bookmark:setBackground(colors.black)
-                    :setForeground(colors.white)
 
-            else
-                state.bookmark = address:getText()
-                bookmark:setBackground(colors.white)
-                    :setForeground(colors.black)
-            end
-        end)
-    if state.bookmark then
-        address:setText(state.bookmark)
-    end
-    widget.address = address
-    widget.go = go
-    widget.bookmark = bookmark
-    widget.close = close
-    widget.indicator = indicator
-    return widget
-end
 function browserFrameWidget(data, frame, cookies)
     local widget = frame:addContainer()
         :setWidth("{parent.width}")
@@ -244,8 +130,6 @@ local function main()
     else
         handleURL("file://example.ccml")
     end
-    local addressBar = addressBarWidget(state.frame)
-    state.addressBar = addressBar
     basalt.run()
     saveConfig()
 end
