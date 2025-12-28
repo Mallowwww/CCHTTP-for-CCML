@@ -71,9 +71,9 @@ if categoryNames[ans] == "Client" or categoryNames[ans] == "All" then
         shell.run("wget run https://raw.githubusercontent.com/Pyroxenium/Basalt2/main/install.lua -r")
     end
     if not pcall(function() temp = require("basalt") end) then
-        term.setTextColor(Colors.red)
+        term.setTextColor(colors.red)
         print("ERROR - Could not install Basalt")
-        term.setTextColor(Colors.white)
+        term.setTextColor(colors.white)
     end
 end
 print("Done !")
