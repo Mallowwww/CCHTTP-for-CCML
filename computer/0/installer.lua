@@ -6,7 +6,6 @@ local files = {
     "client/craftium.lua",
     "client/browser.lua",
     "client/dnsapi.lua",
-    "client/lightbrowser.lua",
     "client/error.ccml",
     "dns/dns.lua",
     "dns/lookup",
