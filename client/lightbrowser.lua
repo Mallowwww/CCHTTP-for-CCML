@@ -112,10 +112,10 @@ end
 function browserFrameWidget(data, frame, cookies)
     local widget = frame:addContainer()
         :setWidth("{parent.width}")
-        :setHeight("{parent.height - 1}")
+        :setHeight("{parent.height}")
         :setBackground(colors.white)
         :setForeground(colors.black)
-        :setPosition(1, 2)
+        :setPosition(1, 1)
     craftium.startInstance(data, widget, state.cchttp, state.http, handleURL, state.cookies)
     return widget
     
@@ -128,7 +128,7 @@ local function main()
     if state.bookmark then
         handleURL(state.bookmark)
     else
-        handleURL("file://example.ccml")
+        handleURL("file://index.ccml")
     end
     basalt.run()
     saveConfig()

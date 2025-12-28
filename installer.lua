@@ -69,7 +69,7 @@ if categoryNames[ans] == "Client" or categoryNames[ans] == "All" then
     local result = pcall(function() temp = require("basalt") end)
     if not result then
         print("Installing Basalt...")
-        shell.run("wget run https://raw.githubusercontent.com/Pyroxenium/Basalt2/main/install.lua -r")
+        shell.run("wget run https://raw.githubusercontent.com/Pyroxenium/Basalt2/main/install.lua -f")
     end
     if not pcall(function() temp = require("basalt") end) then
         term.setTextColor(colors.red)
