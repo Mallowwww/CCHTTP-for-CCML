@@ -21,6 +21,7 @@ local categories = {
         "client/cchttp.lua",
         "client/craftium.lua",
         "client/browser.lua",
+        "client/lightbrowser.lua",
         "client/dnsapi.lua",
         "client/error.ccml"
     }, DNS = {
