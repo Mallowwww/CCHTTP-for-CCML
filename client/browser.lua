@@ -223,6 +223,16 @@ local function addressBarWidget(frame)
     widget.indicator = indicator
     return widget
 end
+function handleRedirect(url)
+    state.indicator = "connecting"
+    os.sleep(1)
+    local result = handleURL(url)
+    if result then
+        state.indicator = "connected"
+    else
+        state.indicator = "disconnected"
+    end
+end
 function browserFrameWidget(data, frame, cookies)
     local widget = frame:addContainer()
         :setWidth("{parent.width}")
@@ -230,7 +240,8 @@ function browserFrameWidget(data, frame, cookies)
         :setBackground(colors.white)
         :setForeground(colors.black)
         :setPosition(1, 2)
-    craftium.startInstance(data, widget, state.cchttp, state.http, handleURL, state.cookies)
+    
+    craftium.startInstance(data, widget, state.cchttp, state.http, handleRedirect, state.cookies)
     return widget
     
 end
