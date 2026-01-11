@@ -26,7 +26,7 @@ end
 function api.lookup(address,timeout)
     settings.define("networking.dns",{
         description = "Default DNS",
-        default = 1,
+        default = 139,
         type = "number"
     })
     local modem = api.MODEM
