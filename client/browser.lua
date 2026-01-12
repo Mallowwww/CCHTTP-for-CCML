@@ -24,8 +24,12 @@ local function loadConfig()
     if not handle then return end
     local data = textutils.unserialiseJSON(handle.readAll())
     if not data then return end
-    state.bookmark = data.bookmark
-    state.cookies = data.cookies
+    if data.bookmark then
+        state.bookmark = data.bookmark
+    end
+    if data.cookies then
+        state.cookies = data.cookies
+    end
 end
 
 local function saveConfig()
